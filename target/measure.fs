@@ -8,13 +8,13 @@
 ;
 
 VARIABLE LPFDIG      \ lop pass filter state
-\ low pass filter, applies a factor of 2
-: lpf2*   ( n -- n )
+\ low pass filter, applies a factor of 32
+: lpf2* ( n -- n )
   LPFDIG @ DUP 32 / - + DUP LPFDIG !
 ;
 
-\ interpolation table lpf2* to double the temperature
-CREATE dig2temp2 15 ,
+\ interpolation table lpf2* to twice the temperature
+CREATE dig2temp2 15 , \ # value pairs
         1216 , 2200 ,
         1534 , 2000 ,
         1982 , 1800 ,
@@ -31,17 +31,23 @@ CREATE dig2temp2 15 ,
        20768 , -100 ,
        22466 , -200 ,
 
-VARIABLE HYSTDIG     \ noise cancel storage
+VARIABLE THETA   \ temperature, noise suppression
 
-\ Cancel +/-0.5 digit noise, 2/
+\ +/-0.5 digit noise suppression, 2/
 : hyst2/ ( n -- n/2 )
-  DUP HYSTDIG @ - ABS  2-
+  DUP THETA @ - ABS  2-
   0< IF
-    DROP HYSTDIG @
+    DROP THETA @
   ELSE
-    DUP HYSTDIG !
+    DUP THETA !
   THEN
   2/
+;
+
+\ chained init
+: init ( -- ) init
+  \ init LPF state with max. value
+  dig2temp2 DUP @ 1- 2* 1+ + @ LPFDIG !
 ;
 
 \ temperature measurement
