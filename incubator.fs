@@ -1,37 +1,29 @@
-\ W1209 basic "thermostat for incubator" example 
+\ W1209 basic "thermostat for incubator" example
 \ Note: for illustration only - untested with real eggs :-)
 
 NVM
+
+\ chained init - starting point
+: init ( -- )
+;
+
 #include measure.fs
-
-\ temperature threshold in [0.1ºC]
-: TEMPLIMIT ( -- n )
-  375  \ 37.5ºC
-;
-
-\ formatted output for fixed point numbers
-: .0 ( n -- )
-  DUP 0< OVER 999 SWAP < OR IF
-    10 / .  \ negative or > 99.9
-  ELSE
-    space <# # 46 hold #S #> type
-  THEN
-;
-
-VARIABLE THERM10     \ filtered thermometer value as [0.1ºC]
+#include control.fs
+#include logger.fs
+#include menu.fs
 
 \ background task with temperature control
-: btask ( -- )
+: task ( -- )
   measure            \ measure temperature
-  DUP THERM10 !      \ save it for later use
-  DUP .0 CR          \ print it
-  TEMPLIMIT < OUT!   \ keep temperature stable
+  control            \ temperature control
+  logger             \ data logging
+  menu               \ menu and display code
 ;
 
 \ start-up word
 : start   ( -- )
-  10000 LPFDIG !
-  [ ' btask ] LITERAL BG !
+  init
+  [ ' task ] LITERAL BG !
 ;
 
 \ set boot vector to start-up word
