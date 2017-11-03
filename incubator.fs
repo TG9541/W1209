@@ -30,5 +30,5 @@ NVM
 ' start 'BOOT !
 RAM
 
-\ Done! Type COLD to start, or power cycle
+\ Done. Type COLD to start!
 

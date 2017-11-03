@@ -15,6 +15,9 @@
 : KEYPLUS  ( -- n ) 66 ;
 : KEYMINUS ( -- n ) 68 ;
 
+CREATE MENUDAT 2 ,
+  -100 , 1000 , 375 ,
+  -20 , 20 , 0 ,
 
 VARIABLE MTIME   \ down counter for auto menu exit
 VARIABLE MLEVEL  \ menu level 0 .. 2
@@ -56,8 +59,26 @@ VARIABLE MVAL    \ parameter value in level 2
   THEN
 ;
 
+\ factor out SET/PLUS/MINUS by defining actions
+
 : mlevel12 ( -- )
-  ." MEN" CR
+  MLEVEL @  1 = IF
+    80 emit MPARA @ . CR
+    ?KEY IF
+      mtimeset DUP KEYSET = IF
+        DROP
+        MLEVEL 2 !
+      ELSE
+        DUP KEYMINUS = IF
+        ELSE
+          KEYPLUS = IF
+          THEN
+        THEN
+      THEN
+    THEN
+  ELSE
+    ." inp" CR
+  THEN
 ;
 
 \ menu code, display temperature value
@@ -72,4 +93,3 @@ VARIABLE MVAL    \ parameter value in level 2
     mlevel0
   THEN
 ;
-
