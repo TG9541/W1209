@@ -1,16 +1,14 @@
 \ W1209 data logger functions
 
-VARIABLE LOGTIM
+  VARIABLE LOGTIM
 
+  \ timer
 
-\ timer
+  : init ( -- ) init  \ chained init
+    0 LOGTIM !
+  ;
 
-\ chained init
-: init ( -- ) init
-  0 LOGTIM !
-;
-
-\ data logger
-: logger ( n -- n )
-
-;
+  : logger ( theta -- theta )
+    \ data logger
+    ( implement me )
+  ;
