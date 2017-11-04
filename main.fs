@@ -27,8 +27,8 @@ NVM
 ;
 
 \ set boot vector to start-up word
-' start 'BOOT !
+\ ' start 'BOOT !
 RAM
 
-\ Done! Type COLD to start, or power cycle
+\ Done. Type COLD to start!
 
