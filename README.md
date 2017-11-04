@@ -6,14 +6,16 @@ This is work in progress. There is a [HACKADAY.IO project][HAD1] where progress 
 
 ## Getting Started
 
+The Makefile provides a dependency resolution feature that downloads an STM8 eForth binary release, and adds the required folders, files, and symlinks to the base folder.
+
 For [programming the W1209 binary](https://github.com/TG9541/W1209/blob/master/out/W1209-FD/W1209-FD.ihx) please follow the instructions in the [STM8EF Wiki page for board W1209](
-https://github.com/TG9541/stm8ef/wiki/Board-W1209#flashing-the-stm8ef-binary).
+https://github.com/TG9541/stm8ef/wiki/Board-W1209#flashing-the-stm8ef-binary), or just type `make flash`.
 
-Interactive scripting through the serial console is supported once the base STM8EF system has been transferred. Please refer to the [instructions for getting a serial console](https://github.com/TG9541/stm8ef/wiki/Board-W1209#serial-communication-through-the-key-pins).
+Interactive scripting through the serial console is supported once the base STM8 eForth system has been flashed to the board. Please refer to the [instructions for getting a serial console](https://github.com/TG9541/stm8ef/wiki/Board-W1209#serial-communication-through-the-key-pins).
 
-The recommended terminal emulator is [e4thcom](https://wiki.forth-ev.de/doku.php/en:projects:e4thcom): it supports line editing, and upload of source files with library #includes.
+The recommended terminal emulator is [e4thcom](https://wiki.forth-ev.de/doku.php/en:projects:e4thcom): it supports line editing, and upload of source files with `#include`, and using a library with `#require`.
 
-The `Makefile` uses ucSim to create an STM8 binary file that contains the full thermostat script, including the W1209-FD base image.
+The `make simload` uses ucSim to create an STM8 binary file that contains the full thermostat script, including the W1209-FD base image. The Docker image [tg9541/docker-sdcc](https://hub.docker.com/r/tg9541/docker-sdcc/) contains tool dependencies for Continuous Integration (refer to `.travis.yml`).
 
 ## Using this repository
 
@@ -25,12 +27,11 @@ The `Makefile` uses ucSim to create an STM8 binary file that contains the full t
 * run `make` to flash the STM8EF binary
 * for interactive scripting install [e4thcom](
 https://wiki.forth-ev.de/doku.php/en:projects:e4thcom)
-* optionally install the development version of ucSim to take advantage of off-line image creation
+* optionally install the development version of ucSim (or use the Docker image) to take advantage of off-line image creation
 
 ## About the STM8EF Base System
 
-The code is based on the [STM8EF v2.2.13 binary release](https://github.com/TG9541/stm8ef/releases/tag/v2.2.13). 
-A copy of the STM8EF library in the release is included (`mcu`, `lib`), and the W1209-FD.ihx binary in `out/W1209-FD` is used.
+The code is based on the [STM8EF binary release](https://github.com/TG9541/stm8ef/releases). The Makefile automatically retrieves, and resolves the version specified by `STM8EF_VER`.
 
 Please refer to the [STM8EF Wiki](https://github.com/TG9541/stm8ef/wiki) for more information.
 
