@@ -1,5 +1,7 @@
 # W1209 Data-Logging Thermostat
 
+[![Travis-CI](https://travis-ci.org/TG9541/W1209.svg?branch=master)](https://travis-ci.org/TG9541/stm8ef)
+
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat. 
 
 This is work in progress. There is a [HACKADAY.IO project][HAD1] where progress is tracked.
