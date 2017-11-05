@@ -2,7 +2,7 @@
 
 \ Note: W1209 thermostats need to be adjusted individually
 \       especially when used outside the range of -5C to +20C
-\       Refer https://github.com/TG9541/W1209/wiki/W1209-Sensor
+\       Refer to https://github.com/TG9541/W1209/wiki/W1209-Sensor
 
 \ Note: digitalization jitter is suppressed by a sliding window
 \       (0.05 C hysteresis) after LPF and scaling
