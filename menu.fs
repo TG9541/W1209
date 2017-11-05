@@ -1,18 +1,13 @@
 \ W1209 menu functions
 
-  \ formatted output for fixed point numbers
-  : .0 ( n -- )
-    DUP 0< OVER 999 SWAP < OR IF
-      10 / .  \ negative or > 99.9
-    ELSE
-      space <# # 46 hold #S #> type
-    THEN
-  ;
+#include STARTTEMP
 
-  \ key constants (A, B , D)
-  : KEYSET   ( -- n ) 65 ;
-  : KEYPLUS  ( -- n ) 66 ;
-  : KEYMINUS ( -- n ) 68 ;
+  \ key constants (A, B, D)
+  65 CONSTANT KEY.SET
+  66 CONSTANT KEY.PLUS
+  68 CONSTANT KEY.MINUS
+
+TARGET
 
   CREATE MENUDAT 2 ,
     -100 , 1000 , 375 ,
@@ -30,6 +25,19 @@
     0 MVAL !
   ;
 
+  : init ( -- ) init  \ chained init
+    initmenu
+  ;
+
+  : .0 ( n -- )
+    \ formatted output for fixed point numbers
+    DUP 0< OVER 999 SWAP < OR IF
+      10 / .  \ negative or > 99.9
+    ELSE
+      space <# # 46 hold #S #> type
+    THEN
+  ;
+
   : mtimeset ( -- )
     \ set MTIME to "seconds by ticks"
     [ 10 200 * ] LITERAL MTIME !
@@ -42,15 +50,11 @@
     THEN
   ;
 
-  : init ( -- ) init  \ chained init
-    initmenu
-  ;
-
   : mlevel0 ( n -- n )
     \ menu level 0
     DUP .0 CR
     ?KEY IF
-      KEYSET = IF
+      KEY.SET = IF
         1 MLEVEL !
         mtimeset
       THEN
@@ -63,13 +67,13 @@
     MLEVEL @  1 = IF
       80 emit MPARA @ . CR
       ?KEY IF
-        mtimeset DUP KEYSET = IF
+        mtimeset DUP KEY.SET = IF
           DROP
           MLEVEL 2 !
         ELSE
-          DUP KEYMINUS = IF
+          DUP KEY.MINUS = IF
           ELSE
-            KEYPLUS = IF
+            KEY.PLUS = IF
             THEN
           THEN
         THEN
@@ -91,3 +95,5 @@
       mlevel0
     THEN
   ;
+
+ENDTEMP
