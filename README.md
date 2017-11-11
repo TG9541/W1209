@@ -21,6 +21,8 @@ The `make simload` uses ucSim to create an STM8 binary file that contains the fu
 
 ## Using this repository
 
+[![asciicast](https://asciinema.org/a/M4fFDCSQeaNFDGM64781kMYmm.png)](https://asciinema.org/a/M4fFDCSQeaNFDGM64781kMYmm)
+
 * clone the repository
 * install [stm8flash](https://github.com/vdudouyt/stm8flash)
 * [connect a ST-LINK-V2 dongle to a W1209][W1209]
