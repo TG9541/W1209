@@ -6,94 +6,201 @@
   65 CONSTANT KEY.SET
   66 CONSTANT KEY.PLUS
   68 CONSTANT KEY.MINUS
+  70 CONSTANT KEY.PRESET  \ key+ & key-
+
+  $8000 CONSTANT DEF?
 
 TARGET
 
-  CREATE MENUDAT 2 ,
-    -100 , 1000 , 375 ,
-    -20 , 20 , 0 ,
-
-  VARIABLE MTIME   \ down counter for auto menu exit
-  VARIABLE MLEVEL  \ menu level 0 .. 2
-  VARIABLE MPARA   \ parameter number for level 1 & 2
-  VARIABLE MVAL    \ parameter value in level 2
-
-  : initmenu ( -- )
-    0 MTIME !
-    0 MLEVEL !
-    0 MPARA !
-    0 MVAL !
-  ;
-
-  : init ( -- ) init  \ chained init
-    initmenu
-  ;
+  : L' ( name -- )
+    \ compile xt of next word as literal
+    [COMPILE] ' [COMPILE] LITERAL
+  ; IMMEDIATE
 
   : .0 ( n -- )
-    \ formatted output for fixed point numbers
-    DUP 0< OVER 999 SWAP < OR IF
-      10 / .  \ negative or > 99.9
+    \ formatted output for 3 digit 10x fixed point numbers
+    DUP -99 < OVER 999 SWAP < OR IF
+      \ number (and sign) too big for 3 7S-LED digits
+      5 + 10 / . \ +0.5 before "floor division"
     ELSE
-      space <# # 46 hold #S #> type
+      \ -9.9 <= val <= 99.9
+      SPACE DUP >R ABS <# # 46 HOLD #S R> SIGN #> TYPE
     THEN
   ;
 
-  : mtimeset ( -- )
-    \ set MTIME to "seconds by ticks"
-    [ 10 200 * ] LITERAL MTIME !
+  : @+ ( a -- n a+2 )
+    \ return next a and n at a
+    DUP @ SWAP 2+
   ;
 
-  : mtimer  ( -- )
-    \ decrement and test MTIME
-    MTIME @ DUP IF
-      1- DUP MTIME !
-    THEN
-  ;
+  VARIABLE m.time   \ down counter for auto menu exit
+  VARIABLE m.level  \ menu level 0 .. 2
+  VARIABLE m.val    \ parameter value in level 2
+  VARIABLE m.ptr    \ current menu
+  VARIABLE m.hold   \ key hold count
 
-  : mlevel0 ( n -- n )
-    \ menu level 0
-    DUP .0 CR
-    ?KEY IF
-      KEY.SET = IF
-        1 MLEVEL !
-        mtimeset
+  : >MENU ( c -- )
+    CREATE
+      , , , ,
+    DOES>                  ( n a )
+      OVER ( n a n ) DEF? = IF
+        ( n a ) NIP @+ @ ( def aEE )
+      ELSE
+        ( n a ) SWAP OVER 2+ 2+ @+ @ ( a n min max )
+        ROT MIN MAX DUP .0 ( a n )
       THEN
+  \ <DOES
+  ;
+
+  \ A bit of trickery:
+  \ * the following part of the dictionary is used as a linked list
+  \ * menu items are Forth words
+  \ * the name of the word is the menu text
+
+  LAST @ ( -- na M.end )
+  \ max  min  address def
+     60    0  EE.DEL    0  >MENU DEL.
+     20  -20  EE.COR    0  >MENU COR.
+     15    0  EE.HYS    5  >MENU HYS.
+    425  325  EE.SET  375  >MENU SET.
+  LAST @ ( -- na M.start )
+  CONSTANT M.start
+
+  \ ( compile time stack: M.end )
+  : M.next ( -- na )
+    \ rotate to next menu item
+    m.ptr DUP @ 2- @
+    DUP ( M.end ) LITERAL = IF
+      DROP M.start
+    THEN
+    DUP ROT !
+  ;
+
+  : M.prev ( -- na )
+    \ rotate back one round to the previous menu item
+    \ this is very inefficient but probably OK for < 20 items
+    m.ptr @ DUP >R
+    BEGIN
+      M.next DUP
+      R@ = NOT WHILE
+      NIP
+    REPEAT
+    R> 2DROP
+    DUP m.ptr !
+  ;
+
+  : preset ( -- )
+    \ initialize parameters with defaults
+    ULOCK
+    m.ptr @ DUP >R        \ get current menu item link address
+    BEGIN
+      DEF? SWAP NAME> EXECUTE !  \ get defaults from menu item
+      M.next DUP
+      R@ = NOT WHILE
+    REPEAT
+    R> 2DROP
+    LOCK
+  ;
+
+  : M.timeset ( -- )
+    \ set m.time to "seconds by ticks"
+    [ 10 200 * ] LITERAL m.time !
+  ;
+
+  : M.timer  ( -- )
+    \ decrement and test m.time
+    m.time @ DUP IF
+      1- DUP m.time !
     THEN
   ;
 
-  \ factor out SET/PLUS/MINUS by defining actions
+  : key.test ( n key -- n flag )
+    OVER =
+  ;
 
-  : mlevel12 ( -- )
-    MLEVEL @  1 = IF
-      80 emit MPARA @ . CR
-      ?KEY IF
-        mtimeset DUP KEY.SET = IF
+  : keyExe ( xtset xt+ xt- -- )
+    \ pressed key selects and executes an xt
+    ?KEY IF M.timeset ELSE 0 THEN
+
+    KEY.SET key.test IF
+      DROP
+      2DROP    EXECUTE  \ xtset
+    ELSE KEY.PLUS key.test IF
+      DROP
+      DROP NIP EXECUTE  \ xt+
+    ELSE KEY.MINUS key.test IF
+      DROP
+      NIP  NIP EXECUTE  \ xt-
+    ELSE
+      2DROP 2DROP       \ do nothing
+    THEN THEN THEN
+  ;
+
+  : m2set ( n -- 0 )
+    ( n ) DUP
+    m.ptr @ NAME> EXECUTE ( n a n )
+    SWAP 2+ @ ULOCK ! LOCK ( n )
+    0 m.time !
+  ;
+
+  : m2 ( -- )
+    m.val @
+    L' m2set L' 1+ L' 1- keyExe
+    m.ptr @ NAME> EXECUTE ( a n )
+    NIP m.val !
+  ;
+
+  : m1select
+    DEF? m.ptr @ NAME> EXECUTE ( def aEE )
+    NIP @ m.val !
+    L' m2 m.level !
+  ;
+
+  : m1 ( -- )
+    L' m1select L' m.next L' m.prev keyExe
+    m.ptr @ count type
+  ;
+
+  : m0 ( -- )
+    ?KEY IF
+      KEY.SET key.test IF
+        DROP
+        M.timeset
+        L' m1 m.level !
+      ELSE
+        KEY.PRESET key.test IF
           DROP
-          MLEVEL 2 !
-        ELSE
-          DUP KEY.MINUS = IF
-          ELSE
-            KEY.PLUS = IF
-            THEN
+          m.hold @ IF
+            -1 m.hold +!
           THEN
         THEN
       THEN
     ELSE
-      ." inp" CR
+      m.hold @ 0= IF
+        BKEY IF
+          ." RES"
+        ELSE
+          preset
+          10 m.hold !
+        THEN
+      ELSE
+        DUP .0
+      THEN
     THEN
   ;
 
   : menu ( n -- n )
     \ menu code, display temperature value
-    MLEVEL @ IF
-      mtimer IF
-        mlevel12
-      ELSE
-        initmenu
-      THEN
-    ELSE
-      mlevel0
+    M.timer 0= IF
+      L' m0 m.level !
     THEN
+    m.level @ EXECUTE
+  ;
+
+  : init ( -- ) init  \ chained init
+    M.start m.ptr !   \ point to the first menu item
+    0 m.time !        \ time-out -> menu init
+    10 m.hold !
   ;
 
 ENDTEMP
