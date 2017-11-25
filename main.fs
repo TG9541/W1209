@@ -11,6 +11,8 @@ RAM
   $4004 CONSTANT EE.COR
   $4006 CONSTANT EE.DEL
 
+  $8000 CONSTANT DEFAULT
+
 TARGET
 
   : init ( -- )
@@ -37,7 +39,6 @@ TARGET
   ;
 
   \ set boot vector to start-up word
-  \ ' start 'BOOT !
-  \ Done. Type COLD to start!
-
+  ' start 'BOOT !
+  \ Done. Type COLD to re-start!
 RAM
