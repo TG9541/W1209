@@ -61,7 +61,12 @@
   : measure   ( -- temperature )
     \ temperature measurement
     getadc            \ noisy ADC readout with bad digit resolution
-    lpf2*             \ low pass filter, turn noise into digits
-    dig2temp2 @inter  \ digits to 2*temperature
-    hyst2/            \ sliding window makes measurement "steady"
+    DUP 900 < IF
+      lpf2*             \ low pass filter, turn noise into digits
+      dig2temp2 @inter  \ digits to 2*temperature
+      hyst2/            \ sliding window makes measurement "steady"
+      EE.COR @ +        \ offset from menu
+    ELSE
+      DROP DEFAULT      \ sensor error - default
+    THEN
   ;
