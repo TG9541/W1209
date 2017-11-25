@@ -8,8 +8,6 @@
   68 CONSTANT KEY.MINUS
   70 CONSTANT KEY.PRESET  \ key+ & key-
 
-  $8000 CONSTANT DEF?
-
 TARGET
 
   : L' ( name -- )
@@ -18,13 +16,18 @@ TARGET
   ; IMMEDIATE
 
   : .0 ( n -- )
-    \ formatted output for 3 digit 10x fixed point numbers
-    DUP -99 < OVER 999 SWAP < OR IF
-      \ number (and sign) too big for 3 7S-LED digits
-      5 + 10 / . \ +0.5 before "floor division"
+    \ print fixed point print number
+    DUP DEFAULT = IF
+      DROP ." DEF."  \ default display, e.g. sensor error
     ELSE
-      \ -9.9 <= val <= 99.9
-      SPACE DUP >R ABS <# # 46 HOLD #S R> SIGN #> TYPE
+      \ formatted output for 3 digit 10x fixed point numbers
+      DUP -99 < OVER 999 SWAP < OR IF
+        \ number (and sign) too big for 3 7S-LED digits
+        5 + 10 / . \ +0.5 before "floor division"
+      ELSE
+        \ -9.9 <= val <= 99.9
+        SPACE DUP >R ABS <# # 46 HOLD #S R> SIGN #> TYPE
+      THEN
     THEN
   ;
 
@@ -40,45 +43,48 @@ TARGET
   VARIABLE m.hold   \ key hold count
 
   : >MENU ( c -- )
+    \ define menu entry w/ processing
     CREATE
       , , , ,
     DOES>                  ( n a )
-      OVER ( n a n ) DEF? = IF
+      OVER ( n a n ) DEFAULT = IF
+        \ mode A: return default value & EE address
         ( n a ) NIP @+ @ ( def aEE )
       ELSE
+        \ mode B: return bounded value & table address
         ( n a ) SWAP OVER 2+ 2+ @+ @ ( a n min max )
-        ROT MIN MAX DUP .0 ( a n )
+        ROT MIN MAX ( a n )
       THEN
+      DUP .0
   \ <DOES
   ;
 
-  \ A bit of trickery:
+  \ Some Forth trickery:
   \ * the following part of the dictionary is used as a linked list
   \ * menu items are Forth words
   \ * the name of the word is the menu text
 
   LAST @ ( -- na M.end )
   \ max  min  address def
-     60    0  EE.DEL    0  >MENU DEL.
+    600    0  EE.DEL    0  >MENU DEL.
      20  -20  EE.COR    0  >MENU COR.
-     15    0  EE.HYS    5  >MENU HYS.
+     20    1  EE.HYS    5  >MENU HYS.
     425  325  EE.SET  375  >MENU SET.
-  LAST @ ( -- na M.start )
-  CONSTANT M.start
+  LAST @ CONSTANT M.START
 
   \ ( compile time stack: M.end )
   : M.next ( -- na )
     \ rotate to next menu item
     m.ptr DUP @ 2- @
     DUP ( M.end ) LITERAL = IF
-      DROP M.start
+      DROP M.START
     THEN
     DUP ROT !
   ;
 
   : M.prev ( -- na )
     \ rotate back one round to the previous menu item
-    \ this is very inefficient but probably OK for < 20 items
+    \ note: this inefficient but OK for < 20 menu items
     m.ptr @ DUP >R
     BEGIN
       M.next DUP
@@ -94,7 +100,7 @@ TARGET
     ULOCK
     m.ptr @ DUP >R        \ get current menu item link address
     BEGIN
-      DEF? SWAP NAME> EXECUTE !  \ get defaults from menu item
+      DEFAULT SWAP NAME> EXECUTE !  \ get defaults from menu item
       M.next DUP
       R@ = NOT WHILE
     REPEAT
@@ -136,52 +142,62 @@ TARGET
     THEN THEN THEN
   ;
 
-  : m2set ( n -- 0 )
-    ( n ) DUP
-    m.ptr @ NAME> EXECUTE ( n a n )
-    SWAP 2+ @ ULOCK ! LOCK ( n )
-    0 m.time !
+  : M.exec ( n -- a n | def aEE )
+    \ execute m.ptr "method"
+    m.ptr @ NAME> EXECUTE
   ;
 
-  : m2 ( -- )
+  : M2.set ( n -- 0 )
+    \ M2 action: store parameter value to EE
+    ( n ) DUP M.exec ( n a n )
+    SWAP 2+ @ ( n n aEE ) ULOCK ! LOCK ( n )
+    0 m.time !  \ return to M0 (OK, that's a hack)
+  ;
+
+  : M2 ( -- )
+    \ edit parameter value
     m.val @
-    L' m2set L' 1+ L' 1- keyExe
-    m.ptr @ NAME> EXECUTE ( a n )
-    NIP m.val !
+    L' M2.set L' 1+ L' 1- keyExe
+    M.exec ( a n ) NIP m.val !
   ;
 
-  : m1select
-    DEF? m.ptr @ NAME> EXECUTE ( def aEE )
+  : M1.select
+    \ M1 action: initialize and start parameter editor
+    DEFAULT M.exec ( def aEE )
     NIP @ m.val !
-    L' m2 m.level !
+    L' M2 m.level !
   ;
 
-  : m1 ( -- )
-    L' m1select L' m.next L' m.prev keyExe
-    m.ptr @ count type
+  : M1 ( -- )
+    \ select parameter
+    L' M1.select L' M.next L' M.prev keyExe
+    m.ptr @ count type \ print name in dictionary
   ;
 
-  : m0 ( -- )
+  : M.rh ( -- )
+    \ reset hold
+    25 m.hold !
+  ;
+
+  : M0 ( -- )
+    \ main menu ( first rough version )
     ?KEY IF
+      \ key actions
       KEY.SET key.test IF
-        DROP
-        M.timeset
-        L' m1 m.level !
-      ELSE
-        KEY.PRESET key.test IF
-          DROP
-          m.hold @ IF
-            -1 m.hold +!
-          THEN
+        DROP M.timeset   L' M1 m.level !
+      ELSE KEY.PRESET key.test IF
+        DROP m.hold @ IF
+          -1 m.hold +!
         THEN
-      THEN
+      THEN THEN
     ELSE
       m.hold @ 0= IF
         BKEY IF
+          \ show that +/- have been held long enough
           ." RES"
         ELSE
-          preset
-          10 m.hold !
+          \ key released - execute preset
+          preset M.rh \ reset hold
         THEN
       ELSE
         DUP .0
@@ -192,15 +208,16 @@ TARGET
   : menu ( n -- n )
     \ menu code, display temperature value
     M.timer 0= IF
-      L' m0 m.level !
+      \ time-out sub menus
+      L' M0 m.level !
     THEN
     m.level @ EXECUTE
   ;
 
   : init ( -- ) init  \ chained init
-    M.start m.ptr !   \ point to the first menu item
+    M.rh              \ reset hold
+    M.START m.ptr !   \ point to the first menu item
     0 m.time !        \ time-out -> menu init
-    10 m.hold !
   ;
 
 ENDTEMP
