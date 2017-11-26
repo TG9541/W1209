@@ -1,9 +1,12 @@
 STM8EF_BOARD=W1209-FD
-STM8EF_VER=2.2.19
+STM8EF_VER=2.2.20.pre.1
 STM8EF_BIN=stm8ef-bin.zip
 STM8EF_URL=https://github.com/TG9541/stm8ef/releases/download/${STM8EF_VER}/${STM8EF_BIN}
 
 all: flash
+
+zip:
+	zip -r ${STM8EF_BOARD}-forth ${STM8EF_BOARD}-forth.ihx
 
 defaults:
 	stm8flash -c stlinkv2 -p stm8s103f3 -s opt -w tools/stm8s103FactoryDefaults.bin
