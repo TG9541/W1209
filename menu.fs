@@ -8,39 +8,23 @@
   68 CONSTANT KEY.MINUS
   70 CONSTANT KEY.PRESET  \ key+ & key-
 
-TARGET
-
   : L' ( name -- )
     \ compile xt of next word as literal
     [COMPILE] ' [COMPILE] LITERAL
   ; IMMEDIATE
 
-  : .0 ( n -- )
-    \ print fixed point print number
-    DUP DEFAULT = IF
-      DROP ." DEF."  \ default display, e.g. sensor error
-    ELSE
-      \ formatted output for 3 digit 10x fixed point numbers
-      DUP -99 < OVER 999 SWAP < OR IF
-        \ number (and sign) too big for 3 7S-LED digits
-        5 + 10 / . \ +0.5 before "floor division"
-      ELSE
-        \ -9.9 <= val <= 99.9
-        SPACE DUP >R ABS <# # 46 HOLD #S R> SIGN #> TYPE
-      THEN
-    THEN
-  ;
-
-  : @+ ( a -- n a+2 )
-    \ return next a and n at a
-    DUP @ SWAP 2+
-  ;
+TARGET
 
   VARIABLE m.time   \ down counter for auto menu exit
   VARIABLE m.level  \ menu level 0 .. 2
   VARIABLE m.val    \ parameter value in level 2
   VARIABLE m.ptr    \ current menu
   VARIABLE m.hold   \ key hold count
+
+  : @+ ( a -- n a+2 )
+    \ return next a and n at a
+    DUP @ SWAP 2+
+  ;
 
   : >MENU ( c -- )
     \ define menu entry w/ processing
@@ -59,17 +43,18 @@ TARGET
   \ <DOES
   ;
 
-  \ Some Forth trickery:
-  \ * the following part of the dictionary is used as a linked list
+  \ Implementation hints:
   \ * menu items are Forth words
-  \ * the name of the word is the menu text
+  \ * a section of the dictionary is used as a linked list
+  \ * the name of a word is used as the menu item string
 
   LAST @ ( -- na M.end )
   \ max  min  address def
-    600    0  EE.DEL    0  >MENU DEL.
-     20  -20  EE.COR    0  >MENU COR.
-     20    1  EE.HYS    5  >MENU HYS.
-    425  325  EE.SET  375  >MENU SET.
+    100    0  EE.LOG   10  >MENU LOG.  \ [0.1h], 0: off
+    600    0  EE.DEL    0  >MENU DEL.  \ [0.1s]
+     20  -20  EE.COR    0  >MENU COR.  \ [0.1C]
+     20    1  EE.HYS    5  >MENU HYS.  \ [0.1C]
+    800  100  EE.SET  375  >MENU SET.  \ [0.1C]
   LAST @ CONSTANT M.START
 
   \ ( compile time stack: M.end )
@@ -120,7 +105,8 @@ TARGET
     THEN
   ;
 
-  : key.test ( n key -- n flag )
+  : M.key= ( n key -- n flag )
+    \ compare key code
     OVER =
   ;
 
@@ -128,13 +114,13 @@ TARGET
     \ pressed key selects and executes an xt
     ?KEY IF M.timeset ELSE 0 THEN
 
-    KEY.SET key.test IF
+    KEY.SET M.key= IF
       DROP
       2DROP    EXECUTE  \ xtset
-    ELSE KEY.PLUS key.test IF
+    ELSE KEY.PLUS M.key= IF
       DROP
       DROP NIP EXECUTE  \ xt+
-    ELSE KEY.MINUS key.test IF
+    ELSE KEY.MINUS M.key= IF
       DROP
       NIP  NIP EXECUTE  \ xt-
     ELSE
@@ -183,9 +169,9 @@ TARGET
     \ main menu ( first rough version )
     ?KEY IF
       \ key actions
-      KEY.SET key.test IF
+      KEY.SET M.key= IF
         DROP M.timeset   L' M1 m.level !
-      ELSE KEY.PRESET key.test IF
+      ELSE KEY.PRESET M.key= IF
         DROP m.hold @ IF
           -1 m.hold +!
         THEN
