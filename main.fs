@@ -2,9 +2,11 @@
 \ Note: for illustration only - untested with real eggs :-)
 
 NVM
+
 #require MARKER
+
 RAM
-  : TARGET NVM ;
+  : TARGET NVM DECIMAL ( uCsim ) ;
 
   $4000 CONSTANT EE.SET
   $4002 CONSTANT EE.HYS

@@ -1,15 +1,19 @@
 \ W1209 temperature measurement with filter and noise suppression
 
-\ Note: W1209 thermostats need to be adjusted individually
+\ Note: W1209 thermostats may require individual adjusted
 \       especially when used outside the range of -5C to +20C
 \       Refer to https://github.com/TG9541/W1209/wiki/W1209-Sensor
 
-\ Note: digitalization jitter is suppressed by a sliding window
-\       (0.05 C hysteresis) after LPF and scaling
+#include STARTTEMP
+
+  900 CONSTANT USENSMAX
+
+TARGET
 
 #require @inter
+  DECIMAL ( uCsim )
 
-  \ note: perform adjustment here if any accuracy is required!
+  \ note: adjust to specific sensor here if accuracy is required!
   \ note: @inter accepts 2..n value pairs
   \ interpolation table (lpf2*) -> 2*(temperature value)
   CREATE dig2temp2 15 ,  \ number of value pairs
@@ -37,6 +41,9 @@
     6 ADC! ADC@ 0 ADC!
   ;
 
+   \ Note: digitalization jitter is suppressed by a sliding window
+   \       (0.05 C hysteresis) after LPF and scaling
+
   : lpf2* ( n -- n )
     \ low pass filter, applies a factor of 32
     LPFDIG @ DUP 32 / - + DUP LPFDIG !
@@ -61,7 +68,7 @@
   : measure   ( -- temperature )
     \ temperature measurement
     getadc            \ noisy ADC readout with bad digit resolution
-    DUP 900 < IF
+    DUP USENSMAX < IF
       lpf2*             \ low pass filter, turn noise into digits
       dig2temp2 @inter  \ digits to 2*temperature
       hyst2/            \ sliding window makes measurement "steady"
@@ -70,3 +77,5 @@
       DROP DEFAULT      \ sensor error - default
     THEN
   ;
+
+ENDTEMP

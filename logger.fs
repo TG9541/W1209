@@ -55,13 +55,15 @@ TARGET
 
   : logger ( theta -- theta )
     \ data logger
-    l.tim @ TIM < IF
-      TIM [ 200 ( ticks/s ) 60 * ] LITERAL + l.tim !
+    EE.LOG @ IF
+      l.tim @ TIM < IF
+        TIM [ 200 ( ticks/s ) 60 * ] LITERAL + l.tim !
 
-      l.min @ EE.LOG @ ( [6min] ) 6 * < IF
-        1 l.min +!
-      ELSE
-        L.res ( theta ) DUP L.log
+        l.min @ EE.LOG @ ( [6min] ) 6 * < IF
+          1 l.min +!
+        ELSE
+          L.res ( theta ) DUP L.log
+        THEN
       THEN
     THEN
   ;

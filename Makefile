@@ -5,6 +5,9 @@ STM8EF_URL=https://github.com/TG9541/stm8ef/releases/download/${STM8EF_VER}/${ST
 
 all: flash
 
+zip:
+	zip -r ${STM8EF_BOARD}-forth ${STM8EF_BOARD}-forth.ihx
+
 defaults:
 	stm8flash -c stlinkv2 -p stm8s103f3 -s opt -w tools/stm8s103FactoryDefaults.bin
 
