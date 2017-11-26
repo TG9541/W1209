@@ -1,12 +1,12 @@
 # W1209 Data-Logging Thermostat
 
-[![Travis-CI](https://travis-ci.org/TG9541/W1209.svg?branch=master)](https://travis-ci.org/TG9541/stm8ef)
+[![Travis-CI](https://travis-ci.org/TG9541/W1209.svg?branch=master)](https://travis-ci.org/TG9541/W1209)
 
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat.
 
 Features are:
 
-* heating thermostat, e.g. for building chicken egg incubators
+* heating thermostat, e.g. for building a chicken egg incubator
 * basic sensor failure detection
 * parameters for set-point, hysteresis, and trip-delay
 * easy to use parameters menu (no need to search for a manual!)
