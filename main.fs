@@ -6,7 +6,8 @@ NVM
 #require MARKER
 
 RAM
-  : TARGET NVM DECIMAL ( uCsim ) ;
+
+  : TARGET NVM ;
 
   $4000 CONSTANT EE.SET
   $4002 CONSTANT EE.HYS

@@ -11,7 +11,6 @@
 TARGET
 
 #require @inter
-  DECIMAL ( uCsim )
 
   \ note: adjust to specific sensor here if accuracy is required!
   \ note: @inter accepts 2..n value pairs
