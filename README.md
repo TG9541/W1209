@@ -47,20 +47,20 @@ Display|Range|Default|Unit|Description
 `LoG.`| 0.0 - 10.0 | 10.0 |[h]| Logger interval in hours
 `dEL.`| 0.0 - 60.0 | 0.0 | [s] | thermostat heating trip delay
 `Cor.`| -2.0 - 2.0 | 0.0 | [°C] | thermometer offset (for corrections around desired set-point)
-`hYS.`| 0.1 | 2.0 | 0.5 | [°C] | thermostat hysteresis (difference between the lower and the upper trip points)
+`hYS.`| 0.1 - 2.0 | 0.5 | [°C] | thermostat hysteresis (difference between the lower and the upper trip points)
 
 The data log can be accessed through the Forth console with the command `L.dump`. The log can be wiped with the command `L.wipe`. To use the Forth console, connect a serial interface adapter to the `+` and `-` key pins.
 
-## Building the Source code
+## Working with the Code in this Repository
 
-The Makefile provides a dependency resolution feature that downloads an STM8 eForth binary release, and adds the required folders, files, and symlinks to the base folder.
+Clone this repository, an run `make depend` for dependency resolution. This will download an STM8 eForth binary, and add required folders, files, and symlinks.
 
 For [programming the W1209 binary](https://github.com/TG9541/W1209/blob/master/out/W1209-FD/W1209-FD.ihx) please follow the instructions in the [STM8EF Wiki page for board W1209](
-https://github.com/TG9541/stm8ef/wiki/Board-W1209#flashing-the-stm8ef-binary), or just type `make flash`.
+https://github.com/TG9541/stm8ef/wiki/Board-W1209#flashing-the-stm8ef-binary) (if `stm8flash` is installed just run `make flash`).
 
-Interactive scripting through the serial console is supported once the base STM8 eForth system has been flashed to the board. Please refer to the [instructions for getting a serial console](https://github.com/TG9541/stm8ef/wiki/Board-W1209#serial-communication-through-the-key-pins).
+Interactive scripting through the serial console is supported by the STM8 eForth base binary. Please refer to the [instructions for getting a serial console](https://github.com/TG9541/stm8ef/wiki/Board-W1209#serial-communication-through-the-key-pins).
 
-The recommended terminal emulator is [e4thcom](https://wiki.forth-ev.de/doku.php/en:projects:e4thcom): it supports line editing, and upload of source files with `#include`, and using a library with `#require`. Just type `#i main.fs` to load the complete source code!
+The recommended terminal emulator is [e4thcom](https://wiki.forth-ev.de/doku.php/en:projects:e4thcom): it supports line editing, and upload of source files with `#include`, and using a library with `#require`. Type `#i main.fs` to load the complete source code.
 
 For Continuous Integration, `make simload` uses ucSim to create an STM8 binary file that contains the full thermostat script, including the W1209-FD base image. The Docker image [tg9541/docker-sdcc](https://hub.docker.com/r/tg9541/docker-sdcc/) contains tool dependencies for Continuous Integration (refer to `.travis.yml`).
 
