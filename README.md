@@ -29,7 +29,27 @@ Please check out the [HACKADAY.IO project][HAD1]!
 
 ## Getting Started
 
-The GitHub releases page contains a
+The GitHub releases page contains a binary file that can be directly programmed to a W1209 using a ST-Link compatible programmer. The W1209 works stand-alone, and the parameters can be set using the board keys (`set`, `+`, `-`).
+
+For programming the W1209 using a cheap ST-Link adapter is recommended - please refer to the [STM8 eForth Wiki](https://github.com/TG9541/stm8ef/wiki/STM8S-Programming#flashing-the-stm8) for instructions.
+
+W1209|ST-Link programmer|TTL-Serial-Interface
+-|-|-
+![W1209](https://user-images.githubusercontent.com/5466977/33417013-d2b29dec-d59f-11e7-8187-e608e856fe16.png)|![Programmer](https://ae01.alicdn.com/kf/HTB1QVvYRXXXXXa5XFXXq6xXFXXXP/ST-Link-V2-stlink-mini-STM8STM32-STLINK-simulator-download-programming-With-Cover.jpg_220x220.jpg)|![TTL-Serial](https://ae01.alicdn.com/kf/HTB1x__9OFXXXXc7XVXXq6xXFXXX6/-Free-Shipping-CH340-module-USB-to-TTL-CH340G-upgrade-download-a-small-wire-brush-plate.jpg_220x220.jpg)
+
+After programming, set the default parameter values, by holding the keys `+` and `-` until the text `rES` appears in the display (about 4s). Pressing the `set` key leads to the parameter menu (the menu exits when no key is pressed in 10s). 
+
+The parameters are as follows:
+
+Display|Range|Default|Unit|Description
+-|-|-|-|-
+`SEt.`| 10.0 - 80.0 |37.5| [°C]| Heating thermostat set point (switch off above)
+`LoG.`| 0.0 - 10.0 | 10.0 |[h]| Logger interval in hours
+`dEL.`| 0.0 - 60.0 | 0.0 | [s] | thermostat heating trip delay
+`Cor.`| -2.0 - 2.0 | 0.0 | [°C] | thermometer offset (for corrections around desired set-point)
+`hYS.`| 0.1 | 2.0 | 0.5 | [°C] | thermostat hysteresis (difference between the lower and the upper trip points)
+
+The data log can be accessed through the Forth console with the command `L.dump`. The log can be wiped with the command `L.wipe`. To use the Forth console, connect a serial interface adapter to the `+` and `-` key pins.
 
 ## Building the Source code
 
