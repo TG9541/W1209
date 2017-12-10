@@ -4,7 +4,7 @@
 
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat. It provides [source code](https://github.com/TG9541/W1209), a ready-to-use [firmware](https://github.com/TG9541/W1209/releases), and [documentation](https://github.com/TG9541/W1209/wiki).
 
-While providing standard thermostat features, the EEPROM memory of the STM8S003F3 microcontroller is also used for logging! 
+Beyond standard thermostat features, this firmware uses the STM8S003F3 EEPROM for logging! As an example, this chart shows the effect of heating temperature setback overnight in my living room as logged by the W1209:
 
 ![tempchart](https://user-images.githubusercontent.com/5466977/33803418-d4864d56-dd8f-11e7-9062-48678e0ed3e2.png)
 
