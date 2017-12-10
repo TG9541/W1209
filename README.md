@@ -4,6 +4,10 @@
 
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat. It provides [source code](https://github.com/TG9541/W1209), a ready-to-use [firmware](https://github.com/TG9541/W1209/releases), and [documentation](https://github.com/TG9541/W1209/wiki).
 
+While providing standard thermostat features, the EEPROM memory of the STM8S003F3 microcontroller is also used for logging! 
+
+![tempchart](https://user-images.githubusercontent.com/5466977/33803418-d4864d56-dd8f-11e7-9062-48678e0ed3e2.png)
+
 With minor modifications the code also works with [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth provides support.
 
 Features are:
