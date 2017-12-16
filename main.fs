@@ -1,5 +1,6 @@
-\ W1209 basic "thermostat for incubator" example
-\ Note: for illustration only - untested with real eggs :-)
+\ W1209 basic data logging thermostat
+\ © 2017 TG9541, refer to https://github.com/TG9541/W1209/blob/master/LICENSE
+\ Note: not yet tested with real eggs :-)
 
 NVM
 
@@ -9,29 +10,29 @@ RAM
 
   : TARGET NVM ;
 
-  $4000 CONSTANT EE.SET
-  $4002 CONSTANT EE.HYS
-  $4004 CONSTANT EE.COR
-  $4006 CONSTANT EE.DEL
-  $4008 CONSTANT EE.LOG
+  $4000 CONSTANT EE.SET    \ EEPROM cell "control set-point"
+  $4002 CONSTANT EE.HYS    \ EEPROM cell "control hysteresis"
+  $4004 CONSTANT EE.DEL    \ EEPROM cell "control delay"
+  $4006 CONSTANT EE.COR    \ EEPROM cell "offset correction"
+  $4008 CONSTANT EE.LOG    \ EEPROM cell "logger interval"
 
-  $8000 CONSTANT DEFAULT
+  $8000 CONSTANT DEFAULT   \ Default value indicator (-32768)
 
 TARGET
 
-  : init ( -- )
-    \ chained init - starting point
+  : init ( -- ) \ chained init - starting point
+    6 ADC!      \ W1209: use ADC channel 6
   ;
 
   : .0 ( n -- )
-    \ print fixed point number
+    \ print fixed point number (n w/ factor 10x)
     DUP DEFAULT = IF
       DROP ."  DEF."  \ default display, e.g. sensor error
     ELSE
       \ formatted output for 3 digit 10x fixed point numbers
       DUP -99 < OVER 999 SWAP < OR IF
         \ number (and sign) too big for 3 7S-LED digits
-        5 + 10 / . \ +0.5 before "floor division"
+        5 + 10 / .    \ +0.5 before "floored division"
       ELSE
         \ -9.9 <= val <= 99.9
         SPACE DUP >R ABS <# # 46 HOLD #S R> SIGN #> TYPE
@@ -40,25 +41,26 @@ TARGET
   ;
 
 #include measure.fs
-#include control.fs
-#include logger.fs
 #include menu.fs
+#include logger.fs
+#include control.fs
 
   : task ( -- )
     \ the application runs as a background task
-    measure            \ measure temperature
-    control            \ temperature control
-    logger             \ data logging
-    menu               \ menu and display code
+    measure  (       -- theta )    \ measure temperature
+    logger   ( theta -- theta )    \ data logging
+    control  ( theta -- theta )    \ temperature control
+    menu     ( theta -- theta )    \ menu and display code
   ;
 
   : start   ( -- )
     \ start-up word
-    init               \ perform chained init
+    init                   \ perform chained init
     [ ' task ] LITERAL BG !
   ;
 
   \ set boot vector to start-up word
   ' start 'BOOT !
-  \ Done. Type COLD to re-start!
+
 RAM
+\ Done. Type COLD to re-start!
