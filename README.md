@@ -15,14 +15,17 @@ Features are:
 * heating thermostat, e.g. for building a chicken egg incubator
 * easy to use parameters menu (no need to search for a manual!) for set-point, hysteresis, and trip-delay
 * basic sensor failure detection
-* temperature logger with 0.1h to 10h intervall, and a 288 entry ring-buffer with log access through a serial console
+* data logger with 0.1h to 10h intervall, and a 144 entry ring-buffer with log access through a serial console:
+  * Lowest temperature
+  * Highest temperature
+  * Heating duty cycle `DC = 100% * t.on/(t.on + t.off)`
+  * Number of relay trip cycles
 * fully programmable in Forth, even while it's running!
 
-Although it's feature-complete, this is work in progress. Please consider the software to be "beta-grade", and there hasn't been an "endurance run" yet.
+Although it's feature-complete, this is work in progress. Please consider the software to be "beta".
 
 Planned features:
 
-* improved logger with min/max temperature, and heating duty cycle
 * a simple "field-bus" for building a network of thermostat units
 * more fail-safe features (e.g. parameter integrity, limits monitoring, and maybe a buzzer)
 
