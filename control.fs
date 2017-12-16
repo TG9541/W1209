@@ -1,5 +1,7 @@
 \ W1209 temperature control functions
-\ For now: just a simple "chicken egg incubator" 2-point control example
+\ © 2017 TG9541, refer to https://github.com/TG9541/W1209/blob/master/LICENSE
+
+\ For now: just a simple 2-point controller
 
 #include STARTTEMP
 
@@ -38,19 +40,17 @@ TARGET
         THEN
       THEN
     THEN
-    c.heat @         \ return flag
+    c.heat @           \ return flag
   ;
 
   : control ( theta -- theta )
-    DUP DEFAULT = IF
-      OFF            \ flag sensor error
-    ELSE
+    DUP DEFAULT = NOT IF
       DUP controller
     THEN
-    ( flag ) OUT!    \ switch relay
+    ( flag ) OUT!      \ switch relay
   ;
 
-  : init ( -- ) init \ chained init
+  : init ( -- ) init   \ chained init
     OFF c.heat !
     0 c.delay !
   ;

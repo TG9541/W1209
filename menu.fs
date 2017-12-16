@@ -1,4 +1,5 @@
 \ W1209 menu functions
+\ © 2017 TG9541, refer to https://github.com/TG9541/W1209/blob/master/LICENSE
 
 #include STARTTEMP
 
@@ -20,9 +21,17 @@ TARGET
   VARIABLE m.val    \ parameter value in level 2
   VARIABLE m.ptr    \ current menu
   VARIABLE m.hold   \ key hold count
+  VARIABLE m.disp   \ last display value
 
-  : @+ ( a -- n a+2 )
-    \ return next a and n at a
+  : M..0 ( n -- n )
+    \ lazy .0: print number only if value has changed
+    DUP m.disp @ = NOT IF
+      DUP m.disp ! DUP .0
+    THEN
+  ;
+
+  : @+ ( a1 -- n a2 )
+    \ return next n at a1 and a2 = a1+2
     DUP @ SWAP 2+
   ;
 
@@ -39,7 +48,7 @@ TARGET
         ( n a ) SWAP OVER 2+ 2+ @+ @ ( a n min max )
         ROT MIN MAX ( a n )
       THEN
-      DUP .0
+      M..0 ( n -- n )    \  print .n if number has changed
   \ <DOES
   ;
 
@@ -98,8 +107,9 @@ TARGET
     [ 10 200 * ] LITERAL m.time !
   ;
 
-  : M.timer  ( -- )
+  : M.timer  ( -- n )
     \ decrement and test m.time
+    \ m.time @ DUP 0= NOT + DUP m.time !
     m.time @ DUP IF
       1- DUP m.time !
     THEN
@@ -157,7 +167,7 @@ TARGET
   : M1 ( -- )
     \ select parameter
     L' M1.select L' M.next L' M.prev keyExe
-    m.ptr @ count type \ print name in dictionary
+    m.ptr @ count type   \ print name in dictionary
   ;
 
   : M.rh ( -- )
@@ -165,8 +175,9 @@ TARGET
     25 m.hold !
   ;
 
-  : M0 ( -- )
-    \ main menu ( first rough version )
+  : M0 ( theta -- theta )
+    \ main menu - normally print theta
+    \ enter menu on key set, preset on key +/-
     ?KEY IF
       \ key actions
       KEY.SET M.key= IF
@@ -183,16 +194,16 @@ TARGET
           ." RES"
         ELSE
           \ key released - execute preset
-          preset M.rh \ reset hold
+          preset M.rh   \ reset hold
         THEN
       ELSE
-        DUP .0
+        M..0 ( n -- n ) \  print n if number has changed
       THEN
     THEN
   ;
 
-  : menu ( n -- n )
-    \ menu code, display temperature value
+  : menu ( theta -- theta )
+    \ menu code with time-out handling
     M.timer 0= IF
       \ time-out sub menus
       L' M0 m.level !
@@ -200,10 +211,10 @@ TARGET
     m.level @ EXECUTE
   ;
 
-  : init ( -- ) init  \ chained init
-    M.rh              \ reset hold
-    M.START m.ptr !   \ point to the first menu item
-    0 m.time !        \ time-out -> menu init
+  : init ( -- ) init    \ chained init
+    M.rh                \ reset hold
+    M.START m.ptr !     \ point to the first menu item
+    0 m.time !          \ time-out -> menu init
   ;
 
 ENDTEMP
