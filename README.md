@@ -4,7 +4,7 @@
 
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat. It provides [source code](https://github.com/TG9541/W1209), a ready-to-use [firmware](https://github.com/TG9541/W1209/releases), and [documentation](https://github.com/TG9541/W1209/wiki).
 
-Besides standard thermostat features, the firmware uses the internal STM8S003F3 EEPROM for data logging! 
+Besides standard thermostat features, the firmware uses the internal STM8S003F3 EEPROM for data logging!
 
 ![w1209](https://user-images.githubusercontent.com/5466977/34077952-4023969c-e310-11e7-8313-49407c417ac9.png)
 
@@ -14,30 +14,28 @@ Features are:
 * no special tool installation necessary:
   * ready-made binaries, and source code, are provided
   * new binaries can be built with the help of Travis-CI
-  * interactive programming in Forth, even while the termostat task is running!
-  * any serial terminal program can be used, e.g. picocom, or cutecom (settings 9600-N-8-1) 
+  * interactive programming in Forth, even while the thermostat task is running!
+  * any serial terminal program can be used, e.g. picocom, or cutecom (settings 9600-N-8-1)
 * data logger with 6 minutes (0.1h) to 10h intervall, and a 144 entry ring-buffer with log access through a serial console:
-  * Lowest temperature
-  * Highest temperature
-  * Heating duty cycle `DC = 100% * t.on/(t.on + t.off)`
-  * Number of relay cycles
-  * `L.dump` command prints the log through the serial console - the latest entry is in the last line 
+  * records lowest and highest temperature
+  * records the number of relay cycles, and the relay duty cycle
+  * `L.dump` command prints the log through the serial console - the last line is the latest entry
   * `L.wipe` command erases the log memory
 * basic sensor failure detection
-* easy to use parameters menu (no need to search for a manual!) for set-point, hysteresis, and trip-delay
+* easy to use parameters menu for set-point, hysteresis, and trip-delay
 
-Although it's feature-complete, this is work in progress (please consider the software "beta").
+This is work in progress although it's feature-complete. Please consider the software "beta".
 
 Planned features:
 
 * a simple "field-bus" for building a network of thermostat units
 * more fail-safe features (e.g. parameter integrity, limits monitoring)
 
-With minor modifications, the code also works with [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth support exists.
+With minor modifications the code also works with [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth support exists.
 
 ## Getting Started
 
-After programming the [binary firmware](https://github.com/TG9541/W1209/releases) to the W1209 it works stand-alone. The parameters can be set using the board keys (`set`, `+`, `-`).
+After programming the [firmware binary](https://github.com/TG9541/W1209/releases) to the W1209, it works as normal thermostat, and parameters can be set using the board keys (`set`, `+`, `-`).
 
 For working with this repository the following items are recommended:
 
@@ -49,9 +47,9 @@ Please refer to the [STM8 eForth Wiki](https://github.com/TG9541/stm8ef/wiki/STM
 
 After programming, the display should show the temperature value (in °C), or `.dEF.` (default) if no sensor is connected).
 
-Before operation, please reset the parameter values by holding the keys `+` and `-` until the text `rES` appears in the display (about 4s). Pressing the `set` key leads to the parameter menu. The menu exits when if key is pressed for about 10s. 
+Before using the thermostat, please reset the parameter values by holding the keys `+` and `-` until the text `rES.` appears on the LED display (about 4s). Pressing the `set` key leads to the parameter menu. The menu exits when if key is pressed for about 10s.
 
-The parameters are as follows:
+The following parameters are available:
 
 Display|Range|Default|Unit|Description
 -|-|-|-|-
@@ -61,9 +59,20 @@ Display|Range|Default|Unit|Description
 `Cor.`| -2.0 - 2.0 | 0.0 | °C | thermometer offset (for corrections around desired set-point)
 `hYS.`| 0.1 - 2.0 | 0.5 | °C | thermostat hysteresis (difference between the lower and the upper trip points)
 
-The data log can be accessed through the Forth console with the command `L.dump`. The log can be wiped with the command `L.wipe`. To use the Forth console, connect a serial interface adapter to the `+` and `-` key pins.
+In most, if not all, applications changing the trip delay parameter `dEL.` should not be required.
 
 ## Using the Data Log
+
+The data logger feature uses the upper 576 bytes of the internal EEPROM (of which 512 bytes are undocumented and thus possibly unavailable in some devices) for a 144 entry ring-buffer. The logger interval (time between samples) can be defined in the range from 6 minutes (0.1h) to 10h by the menu item `LoG.`.
+
+The following items are recorded:
+
+  * Lowest temperature
+  * Highest temperature
+  * Heating duty cycle `DC = 100% * t.on/(t.on + t.off)`
+  * Number of relay cycles
+
+The data log can be accessed through the Forth console with the command `L.dump`. The log can be wiped with the command `L.wipe`. To use the Forth console, connect a serial interface adapter to the `+` and `-` key pins.
 
 The following chart demonstrates the influence of insulation improvements, a hysteresis parameter change, and the effect of heating temperature setback overnight in my living room:
 
@@ -84,6 +93,12 @@ Such a chart can be created with the following steps:
 * take a note of the read out time, and the log interval)
 * copy and paste the data to a spread sheet program
 * use the known read-out time, and the log intervall for creating a time axis for an x/y chart
+
+## The Thermostat Controller
+
+`control.fs` implements a very simple 2-point controller with hysteresis, and delay. There is no other reason for either of the parameters other than they can be used for mitigating noise, which the sensor measurement already takes care of.
+
+In future versions it may be replaced by a simple PI controller, where the relay duty cycle is the control variable.
 
 ## Working with the Code in this Repository
 
@@ -118,7 +133,7 @@ Please refer to the [STM8EF Wiki](https://github.com/TG9541/stm8ef/wiki) for mor
 
 ## Contributing
 
-This is a community projecy - it's driven by user contributions! 
+This is a community projecy - it's driven by user contributions!
 
 Please [write an issue](https://github.com/TG9541/W1209/issues) if you have questions, post a comment in the [HACKADAY.IO project][HAD1], or contribute docs, code, new use-cases and requirements.
 
