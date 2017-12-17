@@ -4,30 +4,36 @@
 
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat. It provides [source code](https://github.com/TG9541/W1209), a ready-to-use [firmware](https://github.com/TG9541/W1209/releases), and [documentation](https://github.com/TG9541/W1209/wiki).
 
-Beyond standard thermostat features, this firmware uses the STM8S003F3 EEPROM for logging! As an example, this chart shows the effect of heating temperature setback overnight in my living room as logged by the W1209:
+Besides standard thermostat features, the firmware uses the internal STM8S003F3 EEPROM for data logging! As an example, the following chart demonstrates the influence of insulation improvements, a hysteresis parameter change, and the effect of heating temperature setback overnight in my living room:
 
-![tempchart](https://user-images.githubusercontent.com/5466977/33803418-d4864d56-dd8f-11e7-9062-48678e0ed3e2.png)
-
-With minor modifications the code also works with [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth provides support.
+![w1209-log2](https://user-images.githubusercontent.com/5466977/34077539-cce83cea-e306-11e7-849c-5c1c5faae08b.png)
 
 Features are:
 
 * heating thermostat, e.g. for building a chicken egg incubator
-* easy to use parameters menu (no need to search for a manual!) for set-point, hysteresis, and trip-delay
-* basic sensor failure detection
-* data logger with 0.1h to 10h intervall, and a 144 entry ring-buffer with log access through a serial console:
+* no special tool installation necessary:
+  * ready-made binaries, and source code, are provided
+  * new binaries can be built with the help of Travis-CI
+  * interactive programming in Forth, even while the termostat task is running!
+  * any serial terminal program can be used, e.g. picocom, or cutecom (settings 9600-N-8-1) 
+* data logger with 6 minutes (0.01h) to 10h intervall, and a 144 entry ring-buffer with log access through a serial console:
   * Lowest temperature
   * Highest temperature
   * Heating duty cycle `DC = 100% * t.on/(t.on + t.off)`
-  * Number of relay trip cycles
-* fully programmable in Forth, even while it's running!
+  * Number of relay cycles
+  * `L.dump` command prints the log through the serial console - the latest entry is in the last line 
+  * `L.wipe` command erases the log memory
+* basic sensor failure detection
+* easy to use parameters menu (no need to search for a manual!) for set-point, hysteresis, and trip-delay
 
-Although it's feature-complete, this is work in progress. Please consider the software to be "beta".
+Although it's feature-complete, this is work in progress (please consider the software "beta").
 
 Planned features:
 
 * a simple "field-bus" for building a network of thermostat units
-* more fail-safe features (e.g. parameter integrity, limits monitoring, and maybe a buzzer)
+* more fail-safe features (e.g. parameter integrity, limits monitoring)
+
+With minor modifications, the code also works with [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth support exists.
 
 ## Getting Started
 
