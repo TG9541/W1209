@@ -4,9 +4,9 @@
 
 This project uses [STM8EF](https://github.com/TG9541/stm8ef) to turn an off-the-shelf [W1209][] into a data logging thermostat. It provides [source code](https://github.com/TG9541/W1209), a ready-to-use [firmware](https://github.com/TG9541/W1209/releases), and [documentation](https://github.com/TG9541/W1209/wiki).
 
-Besides standard thermostat features, the firmware uses the internal STM8S003F3 EEPROM for data logging! As an example, the following chart demonstrates the influence of insulation improvements, a hysteresis parameter change, and the effect of heating temperature setback overnight in my living room:
+Besides standard thermostat features, the firmware uses the internal STM8S003F3 EEPROM for data logging! 
 
-![w1209-log2](https://user-images.githubusercontent.com/5466977/34077539-cce83cea-e306-11e7-849c-5c1c5faae08b.png)
+![w1209](https://user-images.githubusercontent.com/5466977/34077952-4023969c-e310-11e7-8313-49407c417ac9.png)
 
 Features are:
 
@@ -16,7 +16,7 @@ Features are:
   * new binaries can be built with the help of Travis-CI
   * interactive programming in Forth, even while the termostat task is running!
   * any serial terminal program can be used, e.g. picocom, or cutecom (settings 9600-N-8-1) 
-* data logger with 6 minutes (0.01h) to 10h intervall, and a 144 entry ring-buffer with log access through a serial console:
+* data logger with 6 minutes (0.1h) to 10h intervall, and a 144 entry ring-buffer with log access through a serial console:
   * Lowest temperature
   * Highest temperature
   * Heating duty cycle `DC = 100% * t.on/(t.on + t.off)`
@@ -62,6 +62,28 @@ Display|Range|Default|Unit|Description
 `hYS.`| 0.1 - 2.0 | 0.5 | °C | thermostat hysteresis (difference between the lower and the upper trip points)
 
 The data log can be accessed through the Forth console with the command `L.dump`. The log can be wiped with the command `L.wipe`. To use the Forth console, connect a serial interface adapter to the `+` and `-` key pins.
+
+## Using the Data Log
+
+The following chart demonstrates the influence of insulation improvements, a hysteresis parameter change, and the effect of heating temperature setback overnight in my living room:
+
+![w1209-log2](https://user-images.githubusercontent.com/5466977/34077539-cce83cea-e306-11e7-849c-5c1c5faae08b.png)
+
+Such a chart can be created with the following steps:
+
+* set the log interval according to the required observation time
+  * 0.1h for control optimization
+  * e.g. 3.5h for the 3 weeks that it takes to hatch a chicken egg
+* let the thermostat do its work (no intervention required)
+* connect a TTL-RS232 interface to the keys (RX:`-`, TX `+` - pins near the LED display)
+* access the console with a serial terminal program with the settings "9600N81"
+  * for Linix e.g. e4thcom, minicom, picoterm, or miniterm.py
+  * for Windos e.g. miniterm.py, PuTTY, Hyperterminal
+  * press the `ENTER` key - STM8 eForth should reply with ` ok`
+* type `L.dump` to extract the data (note: the last line is "now")
+* take a note of the read out time, and the log interval)
+* copy and paste the data to a spread sheet program
+* use the known read-out time, and the log intervall for creating a time axis for an x/y chart
 
 ## Working with the Code in this Repository
 
