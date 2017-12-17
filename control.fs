@@ -45,7 +45,9 @@ TARGET
 
   : control ( theta -- theta )
     DUP DEFAULT = NOT IF
-      DUP controller
+      DUP controller ( flag )
+    ELSE
+      0  ( flag )      \ sensor value undefined: control variable inactive
     THEN
     ( flag ) OUT!      \ switch relay
   ;
