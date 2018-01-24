@@ -7,7 +7,7 @@
   $4040 CONSTANT L.START
   $4280 CONSTANT L.END
 
-  DEFAULT SET. DROP .S       \ default temperature from menu
+  DEFAULT SET. DROP        \ default temperature from menu
         CONSTANT L.OFFS    \ use as offset in log memory
 
 TARGET

@@ -1,0 +1,31 @@
+\ STM8 eForth fixed point number output (2.1) for 3 digit LED displays
+\ refer to github.com/TG9541/W1209/blob/master/LICENSE
+
+#include STARTTEMP
+
+#require <#
+#require #
+#require HOLD
+#require #S
+#require SIGN
+#require #>
+#require TYPE
+#require DEFAULT
+
+TARGET
+  : .0 ( n -- )
+    \ print fixed point number (n w/ factor 10x)
+    DUP DEFAULT = IF
+      DROP ."  DEF."  \ default display, e.g. sensor error
+    ELSE
+      \ formatted output for 3 digit 10x fixed point numbers
+      DUP -99 < OVER 999 SWAP < OR IF
+        \ number (and sign) too big for 3 7S-LED digits
+        5 + 10 / .    \ +0.5 before "floored division"
+      ELSE
+        \ -9.9 <= val <= 99.9
+        SPACE DUP >R ABS <# # 46 HOLD #S R> SIGN #> TYPE
+      THEN
+    THEN
+  ;
+ENDTEMP
