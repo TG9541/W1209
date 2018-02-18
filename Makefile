@@ -1,5 +1,5 @@
 STM8EF_BOARD=W1209-FD
-STM8EF_VER=2.2.20
+STM8EF_VER=2.2.21.pre3
 STM8EF_BIN=stm8ef-bin.zip
 STM8EF_URL=https://github.com/TG9541/stm8ef/releases/download/${STM8EF_VER}/${STM8EF_BIN}
 
@@ -12,7 +12,7 @@ defaults:
 	stm8flash -c stlinkv2 -p stm8s103f3 -s opt -w tools/stm8s103FactoryDefaults.bin
 
 flash: depend
-	stm8flash -c stlinkv2 -p stm8s103f3 -w out/W1209-FD/W1209-FD.ihx
+	stm8flash -c stlinkv2 -p stm8s103f3 -w out/$(STM8EF_BOARD)/$(STM8EF_BOARD).ihx
 
 load: depend
 	tools/codeload.py serial main.fs
