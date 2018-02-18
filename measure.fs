@@ -35,6 +35,7 @@ TARGET
   VARIABLE lpf.adc      \ LPF memory for ADC value
   VARIABLE lpf.tem      \ LPF memory for temperature
   VARIABLE lpf.tem2     \ unchatter memory
+  VARIABLE theta        \ temperature value
 
   : lpf32 ( n1 a -- n2 )
     \ low pass filter, multiplies n1 by 32, uses a as LPF memory
@@ -71,6 +72,8 @@ TARGET
     ELSE
       DROP DEFAULT      \ sensor error - default
     THEN
+
+    DUP theta !         \ keep a copy of theta, e.g. for console use
   ;
 
 ENDTEMP
