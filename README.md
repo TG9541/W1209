@@ -37,7 +37,7 @@ With minor modifications the code also works with [other generic thermostat boar
 
 After programming the [firmware binary](https://github.com/TG9541/W1209/releases) to the W1209, it works as normal thermostat, and parameters can be set using the board keys (`set`, `+`, `-`).
 
-For working with this repository the following items are recommended:
+For using the code in this repository the following items are recommended:
 
 W1209|ST-Link programmer|TTL-Serial-Interface
 -|-|-
