@@ -8,7 +8,7 @@ install:
 - docker run -v `pwd`:/home tg9541/docker-sdcc:V1.0.1 /bin/sh -c "sdcc --version ;
   sstm8 -version"
 script: docker run -v `pwd`:/home tg9541/docker-sdcc:V1.0.1 /bin/sh -c "cd /home &&
-  make simload && make zip"
+  make simload && make zip && cat W1209-FD-forth.ihx"
 deploy:
   provider: releases
   api_key:
