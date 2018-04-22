@@ -1,5 +1,5 @@
 STM8EF_BOARD=W1209-FD
-STM8EF_VER=2.2.21
+STM8EF_VER=2.2.22.pre2
 STM8EF_BIN=stm8ef-bin.zip
 STM8EF_URL=https://github.com/TG9541/stm8ef/releases/download/${STM8EF_VER}/${STM8EF_BIN}
 
@@ -22,9 +22,7 @@ simload: depend
 
 target: depend
 	rm -f target
-	rm -f FORTH.efr
 	ln -s out/${STM8EF_BOARD}/target target
-	ln -s out/${STM8EF_BOARD}/FORTH.efr .
 
 depend:
 	if [ ! -d "out" ]; then \
@@ -35,4 +33,4 @@ depend:
 	fi
 
 clean:
-	rm -rf target FORTH.efr STM8S103.efr STM8S105.efr docs lib mcu out tools
+	rm -rf target STM8S103.efr STM8S105.efr docs lib mcu out tools
