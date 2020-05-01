@@ -13,6 +13,11 @@ deploy:
   provider: releases
   api_key:
     secure: o/mjgP/dMwKE2Z3oZ+Z0kgPRv522musZv4i4YRw/RZZ1jIKvKBGOU6YAnm2qUEW2eJzkq+V8taF2ifOvrLldRweowy6p/WRTLT52+EXIHUCtFaO3YfOaxAK/qGlHoeHoUiTM2AifVjLDg7Jzs2UYchBM3v/qjTU02ylnVKmgHCIkqr4h+VkfyZXI7bTbwm2dThv+eYcuZrv87HX3mCq5I7iBN1d7NzBcp3Sy3fk2m1UkzONR4lKs0m2FfNONtZQ/bGmbYOFyruR4U83ISByICbv5fXqU5MzQ02ffepEfKtWFmuNLUVVMZdY5eb/vSyg94FgMfMbURQJmU9qLZU2pfFedRe72mByAmWyATQu/HXXyYGjxl927+ivUzD/b4RNeexE73kov36rhP79kLYisWVy50gsL9LuxBkBzeQVOfMBqJ4hoCQwUlzqF7jpVPcCucjXwlpaPZpE3lRKIC/T26wv6lNXUanwqEKb1ck0q28v94tFbv7LcRpC8Ce1ATLMxWEhhImkduSQXEGwicDbg2kwgzcKy2KKOb1sozb7S12K1lft2HDYSYcu8LYcdB75+MEdYXtgAq5q5rauL/kpGHyZ+m25YXIFc9H98pLMe2o5IuLj/X6A9LbsLL2dhLdxSjbFJFTIqSHVW4NN+N/Ouz43B4RK+1WnXbnC3TAneUws=
-  file: dmo
+  file:
+    - "out/stm8ef-bin.zip"
+    - "out/stm8ef-bin.tgz"
+  skip_cleanup: true
   on:
+    tags: true
+    branch: master
     repo: TG9541/W1209
