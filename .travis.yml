@@ -12,12 +12,7 @@ script: docker run -v `pwd`:/home tg9541/docker-sdcc:V3.8.6 /bin/sh -c "cd /home
 deploy:
   provider: releases
   api_key:
-    secure: zAu5q6+9+zdC8weWy/xNQtuJb3TYQ9bMdiJuW80WcW2e/5xPsY9BM4rpz5r4XeFP/9IsdZhn3ZpTH1+KTZljpQwa+W1UI/OMgGMh4LzMpWawGQn8IZni3da57VTsA+EScMxVXRoRel3AfgANMKDFIhWvmj6klbj1Uw1t6fD69iw1I6sU4fKXvN3DpsPJmx4LtExHPonmZ1ikB08bDkMryo/GxWfTYlscL1CAD4Ea3O+fcWsV2X5Vne89KsL50UgheegvggbnJifXs/Lj6gBaNHIyO0peoIrxgKaTNb344yfHtEwS7JutfD5GLft7fte13doLOsrPjDDNjC0q7hDN8lCk3Aa+vgbQhudmYxW8bzTqY2vpitIoU5XTpmOsC1VFs6c7N2t3v/+uDNXZJoXWL1Nh9WnsL3j7SoBpPmPFzZ8k2Fly5WiSFI07dR2XzlXzlPBvp1ae6Rc71XH+FuPSvHQnfI99PnkozIIXZnN6lcrbN9v4oSzZ8b77l2LEH4gJDtC+gdAvXHOyD+X1JoGdxYDqZGGXOT+ecwge3gDmdzy+34n4q9qj5mqtZALrqOJMl+8z21LZ/B4nUzM1L5lclfwcO5PiMAv3LSQ7wDzFNrygpnCQi71cwn5CPs/78+xgHvnPFOeZMr/FOZL5dv/zylubIOBW1WWSX9fGB8Yt3X4=
-  file:
-    - "out/stm8ef-bin.zip"
-    - "out/stm8ef-bin.tgz"
-  skip_cleanup: true
+    secure: o/mjgP/dMwKE2Z3oZ+Z0kgPRv522musZv4i4YRw/RZZ1jIKvKBGOU6YAnm2qUEW2eJzkq+V8taF2ifOvrLldRweowy6p/WRTLT52+EXIHUCtFaO3YfOaxAK/qGlHoeHoUiTM2AifVjLDg7Jzs2UYchBM3v/qjTU02ylnVKmgHCIkqr4h+VkfyZXI7bTbwm2dThv+eYcuZrv87HX3mCq5I7iBN1d7NzBcp3Sy3fk2m1UkzONR4lKs0m2FfNONtZQ/bGmbYOFyruR4U83ISByICbv5fXqU5MzQ02ffepEfKtWFmuNLUVVMZdY5eb/vSyg94FgMfMbURQJmU9qLZU2pfFedRe72mByAmWyATQu/HXXyYGjxl927+ivUzD/b4RNeexE73kov36rhP79kLYisWVy50gsL9LuxBkBzeQVOfMBqJ4hoCQwUlzqF7jpVPcCucjXwlpaPZpE3lRKIC/T26wv6lNXUanwqEKb1ck0q28v94tFbv7LcRpC8Ce1ATLMxWEhhImkduSQXEGwicDbg2kwgzcKy2KKOb1sozb7S12K1lft2HDYSYcu8LYcdB75+MEdYXtgAq5q5rauL/kpGHyZ+m25YXIFc9H98pLMe2o5IuLj/X6A9LbsLL2dhLdxSjbFJFTIqSHVW4NN+N/Ouz43B4RK+1WnXbnC3TAneUws=
+  file: dmo
   on:
-    tags: true
-    branch: master
     repo: TG9541/W1209
