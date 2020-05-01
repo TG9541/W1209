@@ -2,6 +2,7 @@
 \ © 2017 TG9541, refer to https://github.com/TG9541/W1209/blob/master/LICENSE
 
 #include STARTTEMP
+#require OUT
 
   $403E CONSTANT EE.PTR
   $4040 CONSTANT L.START
