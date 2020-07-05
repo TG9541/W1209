@@ -131,7 +131,7 @@ For Continuous Integration use cases `make simload` applies ucSim to create an S
 
 ## About the STM8 eForth Base System
 
-The code is based on the [STM8EF binary release](https://github.com/TG9541/stm8ef/releases). The Makefile automatically retrieves the version specified by `STM8EF_VER`.
+The code is based on the [STM8EF binary release](https://github.com/TG9541/stm8ef/releases). The Makefile uses the "modular build" method to automatically build a binary for the board support folder `W1209-FD`.
 
 Please refer to the [STM8EF Wiki](https://github.com/TG9541/stm8ef/wiki) for more information.
 
