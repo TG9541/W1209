@@ -1,12 +1,12 @@
 STM8EF_BOARD=W1209-FD
-STM8EF_VER=2.2.24.pre3
+STM8EF_VER=2.2.24
 STM8EF_BIN=stm8ef-bin.zip
 STM8EF_URL=https://github.com/TG9541/stm8ef/releases/download/${STM8EF_VER}/${STM8EF_BIN}
 
-E4THCOM=e4thcom-0.6.3
+E4THCOM=e4thcom
 TERM_PORT=ttyUSB0
 TERM_BAUD=9600
-TERM_FLAGS=
+TERM_FLAGS="-p mcu:target:lib"
 
 ifeq ($(BOARD),)
 
@@ -36,7 +36,7 @@ build: words
 load: flash
 	tools/codeload.py -b out/$(STM8EF_BOARD) -p /dev/$(TERM_PORT) serial $(STM8EF_BOARD)/board.fs
 
-flash: target defaults
+flash: target
 	stm8flash -c stlinkv2 -p stm8s103f3 -w out/$(STM8EF_BOARD)/$(STM8EF_BOARD).ihx
 
 defaults:

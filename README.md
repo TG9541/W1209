@@ -8,10 +8,10 @@ This project uses [STM8 eForth](https://github.com/TG9541/stm8ef) to turn the of
 
 Features are:
 
-* a heating thermostat, e.g. for building a chicken egg incubator
+* a heating thermostat, e.g. for a chicken egg incubator
 * no special tool installation necessary
   * ready-made binaries, and source code, are provided
-  * new binaries can be built with the help of Travis-CI
+  * new binaries can be built with the help of Travis-CI (or locally on your Linux machine)
   * interactive programming in Forth, even while the thermostat task is running!
   * any serial terminal program can be used, e.g. picocom, cutecom, or e4thcom
 * data logger with a 144 entry ring-buffer, a 0.1h to 10h intervall, and log access through the serial console
@@ -131,7 +131,7 @@ For Continuous Integration use cases `make simload` applies ucSim to create an S
 
 ## About the STM8 eForth Base System
 
-The code is based on the [STM8EF binary release](https://github.com/TG9541/stm8ef/releases). The Makefile automatically retrieves the version specified by `STM8EF_VER`.
+The code is based on the [STM8EF binary release](https://github.com/TG9541/stm8ef/releases). The Makefile uses the "modular build" method to automatically build a binary for the board support folder `W1209-FD`.
 
 Please refer to the [STM8EF Wiki](https://github.com/TG9541/stm8ef/wiki) for more information.
 
