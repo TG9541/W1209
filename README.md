@@ -22,22 +22,22 @@ Features are:
 * detection of "sensor disconnected failure"
 * easy to use parameters menu for set-point, hysteresis, and trip-delay
 
-This is work in progress although it's feature-complete. Please consider the software "beta" (please write an issue if you need support or want to give feedback :-) ). 
+This is work in progress although it's feature-complete. Please consider the software "beta" (please write an issue if you need support or want to give feedback :-) ).
 
 Possible future features:
 
 * a simple "field-bus" for building a network of thermostat units
 * more fail-safe features (e.g. parameter integrity, limits monitoring)
 
-Please note that implementing new features may require using a more compact STM8 eForth build, or removing existing features.
+Please note that implementing new features may require using a more compact STM8 eForth build, or removing existing features. The STM8 eForth [modular-build](https://github.com/TG9541/stm8ef-modular-build) feature makes that easy.
 
-With minor modifications the code should also work for [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth support exists.
+With minor modifications the code can be used for [other generic thermostat boards](https://github.com/TG9541/stm8ef/wiki/STM8S-Value-Line-Gadgets#thermostats) for which STM8s eForth support exists. Other boards can be added with the help of modular-build. The code can also be used for non-interactive thermostats, e.g. using a [C0135 Relay Board](https://github.com/TG9541/stm8ef/wiki/Board-C0135).
 
 ## Getting Started
 
 **Note: STM8 eForth only works on supported STM8 chips - W1209 boards with a Nuvoton chip will have to be modified before they can be used with the code in this repository!**
 
-**512 of the 576 bytes logging buffer rely on an undocumented STM8S003F3P6 feature which *might* not work in some chips. Using an STM8S103F3P6 or an STM8S903F3P6 chip will fix that.** 
+**512 of the 576 bytes logging buffer rely on an undocumented STM8S003F3P6 feature which *might* not work in some chips. Although there are no known cases of where the extended EEPROM didn't work, using an STM8S103F3P6 chip or reducing the logging buffer to 64 bytes will always work.**
 
 After programming the [firmware binary](https://github.com/TG9541/W1209/releases) to the W1209 board, it should work as normal thermostat. Parameters can be set using the board keys (`set`, `+`, `-`).
 
@@ -87,16 +87,16 @@ Such a chart can be created with the following steps:
 * set the log interval according to the required observation time
   * 0.1h for control optimization
   * e.g. 3.5h for the 3 weeks that it takes to hatch a chicken egg
-* let the thermostat do its work (no intervention required)
-* connect a TTL-RS232 interface to the keys (RX:`-`, TX `+` - pins near the LED display)
-* access the console with a serial terminal program with the settings "9600N81"
+* let the thermostat run (no intervention required)
+* connect a TTL-RS232 interface to the keys `+` (RX) and `-` (TX) (pins next to the LED display)
+* access the console with a serial terminal program with the settings "9600-N-8-1"
   * for Linix e.g. e4thcom, minicom, picoterm, or miniterm.py
   * for Windos e.g. miniterm.py, PuTTY, Hyperterminal
-  * press the `ENTER` key - STM8 eForth should reply with ` ok`
+  * press the `ENTER` key - STM8 eForth should respond with ` ok`
 * type `L.dump` to extract the data (note: the last line is "now")
 * take a note of the read out time, and the log interval)
 * copy and paste the data to a spread sheet program
-* use the known read-out time, and the log intervall for creating a time axis for an x/y chart
+* use the known read-out time, and the log intervall for the time in the x-axis of an x/y chart
 
 ## The Thermostat Controller
 
