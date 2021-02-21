@@ -1,0 +1,25 @@
+ \ dig2tem-5k1 - alternative table for boards w/ R2 = 5k1
+ \ by @BigVulcanDeal - see https://f.ls/YtCBi
+ \ hint: #include dig2tem-5k1 to NVM using before loading measure.fs
+
+  \ note: adjust to specific sensor here if accuracy is required!
+  \ note: @inter accepts 2..n value pairs
+  \ interpolation table ADC digits * 32 -> temperature * 10
+  CREATE dig2tem  14 ,  \ number of value pairs
+          4405 , 1100 ,
+          5372 , 1000 ,
+          6697 ,  900 ,
+          8156 ,  800 ,
+         10031 ,  700 ,
+         12263 ,  600 ,
+         14760 ,  500 ,
+         17478 ,  400 ,
+         20324 ,  300 ,
+         21701 ,  250 ,
+         23108 ,  200 ,
+         25565 ,  100 ,
+         26509 ,   00 ,
+         28559 ,  -50 ,
+         29371 , -100 ,
+
+
