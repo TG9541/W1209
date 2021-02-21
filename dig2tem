@@ -1,0 +1,21 @@
+\ dig2tem - W1209 STM8 eForth digit-to-temperature table
+\ primary table for boards w/ R2 = 20k
+
+  \ note: adjust to specific sensor here if accuracy is required!
+  \ note: @inter accepts 2..n value pairs
+  \ interpolation table ADC digits * 32 -> temperature * 10
+  CREATE dig2tem  14 ,  \ number of value pairs
+          1216 , 1100 ,  \  1  1216 -> 11.0 C
+          1534 , 1000 ,  \  2
+          1982 ,  900 ,  \  3
+          2560 ,  800 ,  \  4
+          3296 ,  700 ,  \  5
+          4320 ,  600 ,  \  6
+          5634 ,  500 ,  \  7
+          7370 ,  400 ,  \  8
+          9632 ,  300 ,  \  9
+         12382 ,  200 ,  \ 10
+         15522 ,  100 ,  \ 11
+         19012 ,    0 ,  \ 12
+         20768 ,  -50 ,  \ 13
+         22466 , -100 ,  \ 14  22466 digits -> -10.0 C
